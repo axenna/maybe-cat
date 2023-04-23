@@ -1,18 +1,25 @@
-use maybe_cat::particle::Particle;
+use maybe_cat::obj::Obj;
 use maybe_cat::sim::Sim;
 use maybe_cat::vec3::Vec3;
 use maybe_cat::force::ForceReg;
 
 fn main() {
-    let p1 = Particle::default();
+    let p = Obj::default_particle();
+    let mp = Obj::default_mass_particle();
     let mut sim = Sim::default();
-    let gravity = Vec3::new(0.0, -10.0, 0.0);
+    let mut gravity = ForceReg::make_gravity(10.0);
 
-    let p_share = sim.add_particle(p1);
+    let pshare = sim.add_obj(p);
+    let mpshare = sim.add_obj(mp);
 
-    let grav_reg = ForceReg::new(gravity, vec![p_share]);
+    gravity.add_target(pshare);
+    gravity.add_target(mpshare);
     
-    sim.reg_force(grav_reg);
+    let g_share = sim.add_force(gravity);
+
     sim.run(5);
+
+    
+
     sim.print_objs();
 }

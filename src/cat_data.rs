@@ -1,17 +1,10 @@
-use crate::force::Forceable;
 use crate::vec3::Vec3;
 
 #[derive(Debug, Clone)]
 pub struct CatData {
-    pos: Vec3,
-    vel: Vec3,
-    acc: Vec3,
-}
-
-impl Forceable for CatData {
-    fn apply_force(&mut self, f: &Vec3,) {
-        self.acc.add(f);
-    }
+    pub pos: Vec3,
+    pub vel: Vec3,
+    pub acc: Vec3,
 }
 
 impl CatData {
@@ -27,10 +20,5 @@ impl CatData {
         self.pos.add_scaled(&self.vel, t);
         self.vel.add_scaled(&self.acc, t);
         self.acc = Vec3::zeroes();
-    }
-
-    //expose acceleration to modify catdata
-    pub fn add_acc_scaled(&mut self, other: &Vec3, s: f32) {
-        self.acc.add_scaled(other, s);
     }
 }

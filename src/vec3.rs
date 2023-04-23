@@ -1,8 +1,10 @@
+use std::cmp::max_by;
+
 #[derive(Debug, Clone)]
 pub struct Vec3 {
-    a: f32,
-    b: f32,
-    c: f32,
+    pub a: f32,
+    pub b: f32,
+    pub c: f32,
 }
 
 impl Vec3 {
@@ -58,5 +60,22 @@ impl Vec3 {
         self.a = f(self.a, other.a);
         self.b = f(self.b, other.b);
         self.c = f(self.c, other.c)
+    }
+
+    pub fn extreme(&self) -> f32{
+        
+        let abs_a = self.a.abs();
+        let abs_b = self.b.abs();
+        let abs_c = self.c.abs();
+
+        if abs_a >= abs_b && abs_a >= abs_c {
+            self.a
+        }
+        else if abs_b >= abs_a && abs_b >= abs_c {
+            self.b
+        }
+        else {
+            self.c
+        }
     }
 }

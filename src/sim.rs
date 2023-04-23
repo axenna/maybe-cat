@@ -1,67 +1,76 @@
 use crate::force::ForceReg;
-use crate::particle::{MassParticle, Particle};
-use crate::types::{ShareVec, Share};
+use crate::types::Share;
 use std::rc::Rc;
 use std::cell::RefCell;
+use crate::obj::Obj;
+
 
 
 pub struct Sim {
     fps: u32,
-    particles: ShareVec<Particle>,
-    regs: Vec<ForceReg>,
+    size: u32,
+    objs: Vec<Share<Obj>>,
+    forces: Vec<Share<ForceReg>>,
 }
 
 impl Sim {
     pub fn new(
         fps: u32,
-        particles: ShareVec<Particle>,
-        regs: Vec<ForceReg>,
+        size: u32,
+        objs: Vec<Share<Obj>>,
+        forces: Vec<Share<ForceReg>>,
     ) -> Self {
         Sim {
             fps,
-            particles,
-            regs,
+            size,
+            objs,
+            forces,
         }
+    }
+
+    pub fn empty(fps: u32, size: u32) -> Self {
+        Self::new(fps, size, Vec::new(), Vec::new())
     }
 
     pub fn default() -> Self {
-        Sim {
-            fps: 60,
-            particles: Vec::new(),
-            regs: Vec::new(),
-        }
+        Self::new(60, 100, Vec::new(), Vec::new())
+    }
+    
+    pub fn add_obj(&mut self, o: Obj) -> Share<Obj>{
+
+        let s = Rc::new(RefCell::new(o));
+        
+        self.objs.push(s.clone());
+
+        s
     }
 
-    pub fn add_particle(&mut self, p: Particle) -> Share<Particle>{
-        let r = Rc::new(RefCell::new(p));
+    pub fn add_force(&mut self, fr: ForceReg) -> Share<ForceReg>{
+        let s = Rc::new(RefCell::new(fr));
 
-        self.particles.push(Rc::clone(&r));
+        self.forces.push(s.clone());
 
-        r
-    }
-
-    pub fn reg_force(&mut self, fr: ForceReg) {
-        self.regs.push(fr);
+        s
     }
 
     pub fn run(&mut self, s: u32){
         for i in 0..(s * self.fps) {
-            println!("{:?}", i);
-            self.step();
+            self.update();
         }
     }
 
     pub fn print_objs(&self) {
-        self.particles
+        self.objs
             .iter()
-            .for_each(|x| println!("{:?}", x.borrow()));
+            .for_each(|x| println!("{:?}", x))
     }
 
-    pub fn step(&mut self) {
-        self.print_objs();
-        self.regs.iter_mut().for_each(|x| x.update());
-        self.print_objs();
-        self.particles.iter_mut().for_each(|x| x.borrow_mut().integrate(1.0 / self.fps as f32));
-        self.print_objs();
+    pub fn update(&mut self) {
+        self.forces
+            .iter_mut()
+            .for_each(|x| x.borrow_mut().update());
+        self.objs
+            .iter_mut()
+            .for_each(|x| x.borrow_mut().integrate(1.0 / self.fps as f32));
     }
 }
