@@ -5,9 +5,10 @@ use maybe_cat::force::ForceReg;
 
 fn main() {
     let p = Obj::default_particle();
-    let mp = Obj::default_mass_particle();
+    let mut mp = Obj::default_mass_particle();
     let mut sim = Sim::default();
     let mut gravity = ForceReg::make_gravity(10.0);
+
 
     let pshare = sim.add_obj(p);
     let mpshare = sim.add_obj(mp);

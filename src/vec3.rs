@@ -78,4 +78,16 @@ impl Vec3 {
             self.c
         }
     }
+
+    pub fn distance_squared_from(&self, other: &Self) -> f32 {
+        (other.a - self.a).powf(2.0) +
+        (other.b - self.b).powf(2.0) +
+        (other.c - self.c).powf(2.0)
+    }
+
+    pub fn within_distance(&self, other: &Self, r: f32) -> bool {
+        self.distance_squared_from(other) <= r
+    }
+
+
 }
