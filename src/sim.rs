@@ -67,15 +67,13 @@ impl Sim {
 
     pub fn identify_collisions(&self) -> Vec<(Share<Obj>, Share<Obj>)>{
         self.objs
-            .clone()
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(i, x)| self.objs
-                              .clone()
-                              .into_iter()
+                              .iter()
                               .enumerate()
                               .filter(|(j, y)| *j != i && x.borrow().is_colliding_with(&y.borrow()))
-                              .map(|(j, y)| (x.clone(), y))
+                              .map(|(j, y)| (x.clone(), y.clone()))
                               .collect::<Vec<(Share<Obj>, Share<Obj>)>>())
             .flatten()
             .collect()
