@@ -33,7 +33,7 @@ impl Sim {
     }
 
     pub fn default() -> Self {
-        Self::new(60, 100, Vec::new(), Vec::new())
+        Self::new(60, 10, Vec::new(), Vec::new())
     }
     
     pub fn add_obj(&mut self, o: Obj) -> Share<Obj>{
@@ -59,12 +59,20 @@ impl Sim {
         }
     }
 
+    pub fn run_debug(&mut self, s: u32){
+        for i in 0..(s * self.fps) {
+            self.print_objs();
+            self.update();
+        }
+    }
+
     pub fn print_objs(&self) {
         self.objs
             .iter()
             .for_each(|x| println!("{:?}", x))
     }
-
+    
+    //brute force collision identification
     pub fn identify_collisions(&self) -> Vec<(Share<Obj>, Share<Obj>)>{
         self.objs
             .iter()
@@ -78,13 +86,23 @@ impl Sim {
             .flatten()
             .collect()
     }
+    
 
     pub fn update(&mut self) {
+        //apply forces
         self.forces
             .iter_mut()
             .for_each(|x| x.borrow_mut().update());
+
         self.objs
             .iter_mut()
-            .for_each(|x| x.borrow_mut().integrate(1.0 / self.fps as f32));
+            .for_each(|x| {
+
+                let mut obj = x.borrow_mut();
+                //integrate
+                obj.integrate(1.0 / self.fps as f32);
+                obj.remediate_out_of_bounds(self.size)
+
+            });
     }
 }

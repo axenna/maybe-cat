@@ -1,5 +1,7 @@
 use std::cmp::max_by;
 
+
+
 #[derive(Debug, Clone)]
 pub struct Vec3 {
     pub a: f32,
@@ -88,6 +90,4 @@ impl Vec3 {
     pub fn within_distance(&self, other: &Self, r: f32) -> bool {
         self.distance_squared_from(other) <= r
     }
-
-
 }

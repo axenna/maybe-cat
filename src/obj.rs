@@ -1,5 +1,6 @@
 use crate::cat_data::CatData;
 use crate::vec3::Vec3;
+use std::ops::Mul;
 
 #[derive(Debug, Clone)]
 pub enum Obj {
@@ -53,10 +54,39 @@ impl Obj {
             MassParticle(_, cd) => cd,
         }
     }
-
+    
+    //will need to be changed later
+    //if any object is within one unit of another it 
+    //returns true
     pub fn is_colliding_with(&self, other: &Self) -> bool {
         self.cat_data()
             .pos
             .within_distance(&other.cat_data().pos, 1.0)
+    }
+    
+
+    //ToDo
+    pub fn remediate_collision(&mut self, other: &Self) {
+    }
+    
+    //ToDo
+    pub fn remediate_out_of_bounds(&mut self, size: u32) {
+
+        let cd = self.cat_data_mut();
+        let pos = &cd.pos;
+        let mut vel = &mut cd.vel;
+
+        let s = size as f32;
+        
+
+        if pos.a.abs() >= s{
+            vel.a = -vel.a;
+        }
+        if pos.b.abs() >= s{
+            vel.b = -vel.b
+        }
+        if pos.c.abs() >= s{
+            vel.c = -vel.c;
+        }
     }
 }

@@ -18,7 +18,7 @@ fn main() {
     
     let g_share = sim.add_force(gravity);
 
-    sim.run(5);
+    sim.run_debug(100);
 
     
 
