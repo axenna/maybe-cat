@@ -48,6 +48,13 @@ impl Obj {
         }
     }
 
+    pub fn inv_mass(&self) -> f32 {
+        match self {
+            Particle(_) => 1.0,
+            MassParticle(inv_m, _) => *inv_m,
+        }
+    }
+
     pub fn cat_data_mut(&mut self) -> &mut CatData {
         match self {
             Particle(cd) => cd,
@@ -65,11 +72,17 @@ impl Obj {
     }
     
 
-    //ToDo
-    pub fn remediate_collision(&mut self, other: &Self) {
+    //uses impulse momentum, F = (m * v) / t. Implementation not yet working for mass particles
+    pub fn remediate_collision(&mut self, other: &Self, t: f32){
+
+        let mut proj = other.cat_data().vel.project(&self.cat_data().vel);
+
+        proj.scale(t);
+
+        self.apply_force(&proj);
     }
     
-    //ToDo
+    //flips any component of velocity that is out of bounds
     pub fn remediate_out_of_bounds(&mut self, size: u32) {
 
         let cd = self.cat_data_mut();

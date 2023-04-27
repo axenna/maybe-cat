@@ -93,16 +93,22 @@ impl Sim {
         self.forces
             .iter_mut()
             .for_each(|x| x.borrow_mut().update());
-
+        
+        //integrate objects and make sure they don't go out of bounds
         self.objs
             .iter_mut()
             .for_each(|x| {
 
                 let mut obj = x.borrow_mut();
-                //integrate
+
                 obj.integrate(1.0 / self.fps as f32);
                 obj.remediate_out_of_bounds(self.size)
 
             });
+        
+        //collision remediation
+        self.identify_collisions()
+            .iter_mut()
+            .for_each(|(x, y)| x.borrow_mut().remediate_collision(&y.borrow(), 1.0 / self.fps as f32));
     }
 }

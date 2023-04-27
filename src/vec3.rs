@@ -25,9 +25,16 @@ impl Vec3 {
     pub fn scale(&mut self, a: f32) {
         self.map(|b| b * a);
     }
+    pub fn div(&mut self, a: f32){
+        self.map(|b| b / a)
+    }
 
     pub fn add(&mut self, other: &Self) {
         self.combine(other, |a, b| a + b);
+    }
+
+    pub fn mag_squared(&self) -> f32{
+        self.a.powf(2.0) + self.b.powf(2.0) + self.c.powf(2.0)
     }
 
     pub fn add_scaled(&mut self, other: &Self, s: f32) {
@@ -89,5 +96,14 @@ impl Vec3 {
 
     pub fn within_distance(&self, other: &Self, r: f32) -> bool {
         self.distance_squared_from(other) <= r
+    }
+
+    pub fn project(&self, other: &Self) -> Vec3{
+
+        let mut v = other.clone();
+
+        v.scale(self.dot(other) / other.mag_squared());
+
+        v
     }
 }
