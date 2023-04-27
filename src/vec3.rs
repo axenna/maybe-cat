@@ -37,6 +37,10 @@ impl Vec3 {
         self.a.powf(2.0) + self.b.powf(2.0) + self.c.powf(2.0)
     }
 
+    pub fn magnitude(&self) -> f32{
+        self.mag_squared().sqrt()
+    }
+
     pub fn add_scaled(&mut self, other: &Self, s: f32) {
         self.a += other.a * s;
         self.b += other.b * s;
@@ -98,12 +102,13 @@ impl Vec3 {
         self.distance_squared_from(other) <= r
     }
 
-    pub fn project(&self, other: &Self) -> Vec3{
+    pub fn get_projection(&mut self, other: &Self) {
 
-        let mut v = other.clone();
+        self.scale(self.dot(other) / self.mag_squared());
 
-        v.scale(self.dot(other) / other.mag_squared());
+    }
 
-        v
+    pub fn normalize(&mut self){
+        self.div(self.magnitude())
     }
 }

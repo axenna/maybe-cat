@@ -69,7 +69,8 @@ impl Sim {
     pub fn print_objs(&self) {
         self.objs
             .iter()
-            .for_each(|x| println!("{:?}", x))
+            .enumerate()
+            .for_each(|(i, x)| println!("{} {:?}", i, x))
     }
     
     //brute force collision identification
@@ -109,6 +110,6 @@ impl Sim {
         //collision remediation
         self.identify_collisions()
             .iter_mut()
-            .for_each(|(x, y)| x.borrow_mut().remediate_collision(&y.borrow(), 1.0 / self.fps as f32));
+            .for_each(|(x, y)| x.borrow_mut().remediate_collision(&mut y.borrow_mut(), 1.0 / self.fps as f32));
     }
 }

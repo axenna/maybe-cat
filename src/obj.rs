@@ -73,13 +73,27 @@ impl Obj {
     
 
     //uses impulse momentum, F = (m * v) / t. Implementation not yet working for mass particles
-    pub fn remediate_collision(&mut self, other: &Self, t: f32){
+    pub fn remediate_collision(&mut self, other: &mut Self, t: f32){
 
-        let mut proj = other.cat_data().vel.project(&self.cat_data().vel);
+        let ocd = &other.cat_data();
 
-        proj.scale(t);
+        let mut impulse = ocd.pos.clone();
+        
+        //figure out vector between self and others position
+        impulse.sub(&self.cat_data().pos);
+        
+        //normalize 
+        impulse.normalize();
 
-        self.apply_force(&proj);
+        //get the component of others velocity pointing at self
+        impulse.get_projection(&ocd.vel);
+
+
+        self.cat_data_mut().vel.add(&impulse);
+
+        //equal and opposite
+        other.cat_data_mut().vel.sub(&impulse);
+
     }
     
     //flips any component of velocity that is out of bounds
