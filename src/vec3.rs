@@ -1,4 +1,4 @@
-use std::cmp::max_by;
+use rand::prelude::Rng;
 
 
 
@@ -12,6 +12,12 @@ pub struct Vec3 {
 impl Vec3 {
     pub fn new(a: f32, b: f32, c: f32) -> Self {
         Vec3 { a, b, c }
+    }
+    
+    //random vec3 with values inbetweeen 0 and 10
+    pub fn random() -> Self{
+        let mut rng = rand::thread_rng();
+        Self::new(rng.gen::<f32>() * 10.0, rng.gen::<f32>() * 10.0, rng.gen::<f32>() * 10.0)
     }
 
     pub fn zeroes() -> Self {

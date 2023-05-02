@@ -1,6 +1,6 @@
 use crate::cat_data::CatData;
 use crate::vec3::Vec3;
-use std::ops::Mul;
+use rand::prelude::random;
 
 #[derive(Debug, Clone)]
 pub enum Obj {
@@ -13,6 +13,14 @@ use Obj::*;
 impl Obj {
     pub fn new_particle(cd: CatData) -> Obj {
         Particle(cd)
+    }
+    pub fn random() -> Self{
+        if random() {
+            Particle(CatData::random())
+        }
+        else {
+            Self::new_mass_particle(random::<f32>(), CatData::random())
+        }
     }
 
     pub fn default_particle() -> Obj {
@@ -73,26 +81,49 @@ impl Obj {
     
 
     //uses impulse momentum, F = (m * v) / t. Implementation not yet working for mass particles
-    pub fn remediate_collision(&mut self, other: &mut Self, t: f32){
+    //ToDo: make sure this works
+    pub fn remediate_collision(&mut self, other: &mut Self, t: f32){    
+        if !self.is_colliding_with(&other){
+            return;
+        }
 
         let ocd = &other.cat_data();
+        let scd = &self.cat_data();
 
-        let mut impulse = ocd.pos.clone();
+        let mut oimpulse = ocd.pos.clone();
+        let mut simpulse = scd.pos.clone();
         
         //figure out vector between self and others position
-        impulse.sub(&self.cat_data().pos);
+        oimpulse.sub(&scd.pos);
+        simpulse.sub(&ocd.pos);
         
         //normalize 
-        impulse.normalize();
+        oimpulse.normalize();
+        simpulse.normalize();
 
         //get the component of others velocity pointing at self
-        impulse.get_projection(&ocd.vel);
+        oimpulse.get_projection(&ocd.vel);
+
+        //don't know if I have this scaling step right yet, but I'm rushing
+        oimpulse.scale(self.inv_mass());
+
+        simpulse.get_projection(&scd.vel);
+
+        //don't know if I have this scaling step right yet, but I'm rushing
+        simpulse.scale(other.inv_mass());
 
 
-        self.cat_data_mut().vel.add(&impulse);
+        self.cat_data_mut().vel.add(&oimpulse);
+        self.cat_data_mut().vel.sub(&simpulse);
 
-        //equal and opposite
-        other.cat_data_mut().vel.sub(&impulse);
+        other.cat_data_mut().vel.add(&simpulse);
+        other.cat_data_mut().vel.sub(&oimpulse);
+        
+        //make them not collide anymore
+        while self.is_colliding_with(&other){
+            self.integrate(t);
+            other.integrate(t);
+        }
 
     }
     

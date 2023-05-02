@@ -11,6 +11,10 @@ impl CatData {
     pub fn new(pos: Vec3, vel: Vec3, acc: Vec3) -> Self {
         CatData { pos, vel, acc }
     }
+    
+    pub fn random() -> Self {
+        Self::new(Vec3::random(), Vec3::random(), Vec3::random())
+    }
 
     pub fn default() -> Self {
         Self::new(Vec3::zeroes(), Vec3::zeroes(), Vec3::zeroes())

@@ -1,9 +1,8 @@
 use crate::vec3::Vec3;
 use crate::types::Share;
 use crate::obj::Obj;
-use std::rc::Rc;
 
-
+#[derive(Debug, Clone)]
 pub struct ForceReg {
     f: Vec3,
     targets: Vec<Share<Obj>>,
